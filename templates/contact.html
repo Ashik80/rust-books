@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="Free Web tutorials">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <div style="border: 1px solid grey; padding: 1rem; border-radius: 1rem; margin-bottom: 0.5rem;">
+            <h3>Name: {{ contact.name }}</h3>
+            <p>Email: {{ contact.email }}</p>
+            {% match contact.phone %}
+                {% when Some with (val) %}
+                    <p>Phone: {{ val }}</p>
+                {% when None %}
+            {% endmatch %}
+            <a href="/contacts/{{ contact.id }}/update">
+                <button type="button">Edit</button>
+            </a>
+            <a href="/contacts/{{ contact.id }}/delete">
+                <button type="button">Delete</button>
+            </a>
+            <a href="/contacts">
+                <button type="button">Back to homepage</button>
+            </a>
+        </div>
+    </body>
+</html>

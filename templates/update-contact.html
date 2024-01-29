@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="Free Web tutorials">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <h2>Editing user {{ contact.email }}</h2>
+        <form method="POST" action="/contacts/{{ contact.id }}/update">
+            <label>Name: </label>
+            <input name="name" value="{{ contact.name }}"><br>
+            <label>Email: </label>
+            <input name="email" value="{{ contact.email }}"><br>
+            <label>Phone: </label>
+            {% match contact.phone %}
+                {% when Some with (val) %}
+                <input name="phone" value="{{ val }}"><br>
+                {% when None %}
+                <input name="phone"><br>
+            {% endmatch %}
+            <input type="submit" value="Update">
+        </form>
+        <a href="/contacts/{{ contact.id }}/view">
+            <input type="button" value="Cancel">
+        </a>
+    </body>
+</html>

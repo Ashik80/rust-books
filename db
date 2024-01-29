@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+source .env
+
+function initializeDb() {
+    echo "Initializing database..."
+    PGPASSWORD=$DB_PASSWORD psql -U $DB_USER -d $DB_DATABASE -h $DB_HOST -p $DB_PORT -f migrations/init/up.sql
+    echo "Database created"
+}
+
+function dropDb() {
+    echo "Dropping database..."
+    PGPASSWORD=$DB_PASSWORD psql -U $DB_USER -d $DB_DATABASE -h $DB_HOST -p $DB_PORT -f migrations/init/down.sql
+    echo "Database dropped"
+}
+
+if [[ $1 == "init" ]]; then
+    initializeDb
+elif [[ $1 == "drop" ]]; then
+    dropDb
+elif [[ $1 == "upgrade" ]]; then
+    echo "Upgrading..."
+else
+    echo "Wrong option"
+    exit 1
+fi
