@@ -4,14 +4,31 @@ source .env
 
 function initializeDb() {
     echo "Initializing database..."
-    PGPASSWORD=$DB_PASSWORD psql -U $DB_USER -d $DB_DATABASE -h $DB_HOST -p $DB_PORT -f migrations/init/up.sql
+    PGPASSWORD=$DB_PASSWORD psql -U $DB_USER -h $DB_HOST -p $DB_PORT -f migrations/init/up.sql
     echo "Database created"
 }
 
 function dropDb() {
     echo "Dropping database..."
-    PGPASSWORD=$DB_PASSWORD psql -U $DB_USER -d $DB_DATABASE -h $DB_HOST -p $DB_PORT -f migrations/init/down.sql
+    PGPASSWORD=$DB_PASSWORD psql -U $DB_USER -h $DB_HOST -p $DB_PORT -f migrations/init/down.sql
     echo "Database dropped"
+}
+
+function upgradeDb() {
+    for file in $(ls migrations); do
+        if [[ $file == "init" ]]; then
+            continue
+        fi
+        echo "Applying migration $file"
+        PGPASSWORD=$DB_PASSWORD psql -U $DB_USER -d $DB_DATABASE -h $DB_HOST -p $DB_PORT -f migrations/$file/up.sql
+    done
+    echo "Database upgraded"
+}
+
+function removeMigration() {
+    echo "Removing migration $1"
+    PGPASSWORD=$DB_PASSWORD psql -U $DB_USER -d $DB_DATABASE -h $DB_HOST -p $DB_PORT -f migrations/$1/down.sql
+    echo "Migration $1 removed"
 }
 
 if [[ $1 == "init" ]]; then
@@ -19,7 +36,9 @@ if [[ $1 == "init" ]]; then
 elif [[ $1 == "drop" ]]; then
     dropDb
 elif [[ $1 == "upgrade" ]]; then
-    echo "Upgrading..."
+    upgradeDb
+elif [[ $1 == "remove" ]]; then
+    removeMigration $2
 else
     echo "Wrong option"
     exit 1
